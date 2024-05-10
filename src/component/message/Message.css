@@ -1,0 +1,17 @@
+.messageBox {
+  /* padding: 1px; */
+  margin: 7px;
+  max-width: 45%;
+  display: flex;
+  flex-direction: column;
+  clear: both;
+}
+
+.incoming {
+  float: left;
+  color: #100f0f;
+}
+.outgoing {
+  float: right;
+  color: #121213;
+}

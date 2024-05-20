@@ -23,7 +23,7 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    socket = io("http://localhost:4000");
+    socket = io("https://chatappserver-98b0.onrender.com/");
     socket.on("connect", () => {
       setId(socket.id);
       alert("connected!!");

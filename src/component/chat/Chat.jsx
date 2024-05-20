@@ -6,11 +6,15 @@ import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import ReactScrollToButtom from "react-scroll-to-bottom";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import { LuSendHorizonal } from "react-icons/lu";
+import { Link } from "react-router-dom";
 
 let socket;
+
 const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [id, setId] = useState("");
+
+  const [isConnected, setIsConnected] = useState(false); // New state for connection status
 
   const send = () => {
     const message = document.getElementById("textarea").value;
@@ -21,44 +25,53 @@ const Chat = () => {
   useEffect(() => {
     socket = io("http://localhost:4000");
     socket.on("connect", () => {
-      alert("connected!!");
       setId(socket.id);
+      alert("connected!!");
+      setIsConnected(true);
     });
     socket.emit("Joined", { user });
-    socket.on("welcome", (data) => {
-      setMessages([...messages, data]);
-    });
+
     socket.on("userJoined", (data) => {
-      setMessages([...messages, data]);
+      setMessages((prevMessages) => [...prevMessages, data]);
+      console.log("user joined");
     });
+
     socket.on("leave", (data) => {
-      setMessages([...messages, data]);
+      setMessages((prevMessages) => [...prevMessages, data]);
+      console.log("user left");
     });
+
     return () => {
-      socket.emit("disconnect");
+      socket.emit("disconnecting");
       socket.off();
     };
   }, []);
-  console.log(messages);
+
   useEffect(() => {
     socket.on("sendMessage", (data) => {
-      setMessages([...messages, data]);
+      setMessages((prevMessages) => [...prevMessages, data]);
     });
     return () => {
       socket.off();
     };
   }, [messages]);
+  const handleClick = () => alert("Are you sure you want to close?");
 
   return (
     <>
       <div className="pl-8">
         <section className=" w-[300px]   md:w-[500px]  rounded-2xl max-w-[90%] text-center shadow-lg shadow-slate-400 bg-white">
-          <div className="p-[15px] bg-[#4f46e5] rounded-t-2xl  text-center flex justify-between">
-            <div className="flex fle">
-              <IoChatbubbleEllipsesOutline className="text-white text-xl" />
-              <h3>Let's Talk</h3>
+          <div className="p-[15px] bg-indigo-600 rounded-t-2xl  text-center flex justify-between">
+            <div className="flex text-center">
+              <IoChatbubbleEllipsesOutline className="text-white text-xl md:text-3xl" />
+              <h3 className="md:text-xl">Let's Chat</h3>
             </div>
-            <IoMdCloseCircleOutline className="text-white text-xl" />
+            <Link to="/">
+              <IoMdCloseCircleOutline
+                onClick={handleClick}
+                className="text-white text-xl md:text-3xl"
+              />
+            </Link>
           </div>
 
           <ReactScrollToButtom className="h-[350px] flex flex-col pt-[8px] ">
@@ -74,13 +87,14 @@ const Chat = () => {
           <div className="flex rounded-sm pb-[8px]">
             <input
               id="textarea"
-              className=" h-[40px] w-[200px] md:h-[50px] md:w-[380px] bg-[#cfcfd2] rounded-2xl  mx-2 border-collapse p-[20px] text-base outline-none"
+              autoComplete="off"
+              className=" h-[40px] w-[200px] md:h-[50px] md:w-[380px] bg-indigo-200 rounded-2xl  mx-2 border-collapse p-[20px] text-base outline-none"
               onKeyPress={(e) => (e.key === "Enter" ? send() : null)}
               placeholder="Write a message..."
             ></input>
             <button
               onClick={send}
-              className="h-[40px] w-[45px] md:h-[50px] md:w-[50px] bg-[#4f46e5] hover:bg-indigo-700 text-white rounded-2xl "
+              className="h-[40px] w-[45px] md:h-[50px] md:w-[50px] bg-indigo-600 hover:bg-blue-700 text-white rounded-2xl "
             >
               <LuSendHorizonal className="text-2xl ml-3" />
             </button>

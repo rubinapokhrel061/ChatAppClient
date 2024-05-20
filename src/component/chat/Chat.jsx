@@ -55,7 +55,6 @@ const Chat = () => {
       socket.off();
     };
   }, [messages]);
-  const handleClick = () => alert("Are you sure you want to close?");
 
   return (
     <>
@@ -67,10 +66,7 @@ const Chat = () => {
               <h3 className="md:text-xl">Let's Chat</h3>
             </div>
             <Link to="/">
-              <IoMdCloseCircleOutline
-                onClick={handleClick}
-                className="text-white text-xl md:text-3xl"
-              />
+              <IoMdCloseCircleOutline className="text-white text-xl md:text-3xl" />
             </Link>
           </div>
 
